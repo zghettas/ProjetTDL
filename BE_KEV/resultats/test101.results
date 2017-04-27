@@ -1,0 +1,28 @@
+test101 {
+   // Sans erreur : initialisation d'une variable de type tableau dynamique de booléens avec une valeur séquence de booléens de taille 2
+   // 	   	    extraction du premier élément de la paire dans une condition de conditionnelle
+   boolean *p = new boolean;
+   if (*p) {
+   }
+}======================
+======================
+======================
+Fichier analyé : tests/test101.bloc
+Bloc Version 0.0.1
+AST :{
+*boolean p = new boolean;
+if ((*@{p})){
+}
+}
+
+Correctement typé.
+PUSH 1
+STORE (1) 0[SB]
+LOAD (1) 0[SB]
+LOADI (1)
+JUMPIF (0) fin_cond_1
+POP (0) 0
+JUMP fin_cond_1
+fin_cond_1:
+POP (0) 1
+

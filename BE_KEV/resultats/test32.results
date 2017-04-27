@@ -1,0 +1,33 @@
+test32 {
+   // Sans erreur : utilisation d'une variable dans un sous-bloc.
+   int i = 1 ;
+   while (true) {
+      int j = i;
+   }
+}======================
+======================
+======================
+Fichier analyé : tests/test32.bloc
+Bloc Version 0.0.1
+AST :{
+int i = 1;
+while (true) {
+int j = @{i};
+}
+}
+
+Correctement typé.
+PUSH 1
+LOADL 1
+STORE (1) 0[SB]
+debut_while_1:
+LOADL 1
+JUMPIF (0) fin_while_1
+PUSH 1
+LOAD (1) 0[SB]
+STORE (1) 1[SB]
+POP (0) 1
+JUMP debut_while_1
+fin_while_1:
+POP (0) 1
+
