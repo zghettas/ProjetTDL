@@ -1,0 +1,22 @@
+test98 {
+   // Sans erreur : initialisation d'une variable de type tableau d'entier avec un tableau créé dynamiquement
+   int *p = new int;
+   *p = 1;
+}======================
+======================
+======================
+Fichier analyé : tests/test98.bloc
+Bloc Version 0.0.1
+AST :{
+*int p = new int;
+(*@{p}) = 1;
+}
+
+Correctement typé.
+PUSH 1
+STORE (1) 0[SB]
+LOADL 1
+LOAD (1) 0[SB]
+STOREI (1)
+POP (0) 1
+

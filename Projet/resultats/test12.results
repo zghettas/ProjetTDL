@@ -1,0 +1,42 @@
+test12 {
+   // Correct : double déclaration dans deux sous-blocs avec le même type.
+   int i = 1 ;
+   if (true) {
+      int i = 1;
+   } else {
+      int i = 1;
+   }
+}======================
+======================
+======================
+Fichier analyé : tests/test12.bloc
+Bloc Version 0.0.1
+AST :{
+int i = 1;
+if (true){
+int i = 1;
+}
+else {
+int i = 1;
+}
+}
+
+Correctement typé.
+PUSH 1
+LOADL 1
+STORE (1) 0[SB]
+LOADL 1
+JUMPIF (0) else_1
+PUSH 1
+LOADL 1
+STORE (1) 1[SB]
+POP (0) 1
+else_1:
+PUSH 1
+LOADL 1
+STORE (1) 1[SB]
+POP (0) 1
+JUMP fin_cond_1
+fin_cond_1:
+POP (0) 1
+
