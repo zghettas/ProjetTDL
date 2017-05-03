@@ -273,7 +273,7 @@ do
 end
 }
 
-Type -> TypeAtomique SuiteTypeAtomique ;
+TypeAtomique SuiteTypeAtomique ;
 
 
 TypeAtomique -> type_bool #ast ;
@@ -290,9 +290,19 @@ do
 end
 }  
  
-TypeAtomique -> type_char  ;  
- 
-TypeAtomique -> type_String ;
+TypeAtomique -> type_char #ast ;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createCharType(); 
+end
+}
+
+TypeAtomique -> type_String #ast ;
+#ast {
+do
+   TypeAtomique^ast := TypeAtomique^factory.createStringType();
+end
+}
  
 TypeAtomique -> identificateur_type InstanceGenericite  ; 
 
