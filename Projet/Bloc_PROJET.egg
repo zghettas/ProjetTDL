@@ -15,11 +15,10 @@ inh gauche      : Expression for SuiteCondition, SuiteTerme, SuiteFacteur;
 inh factory     : BlockFactory for Bloc, Instruction, SuiteConditionnelle, Instructions, 
                   Expression, Expressions, SuiteExpressions, Condition, SuiteCondition, 
                   Terme, SuiteTerme, Facteur, SuiteFacteur, Valeur, TypeAtomique, Affectable, 
-                  SuiteAffectable, Acces, Champ, Champs, SuiteNouveau ;  
+                  SuiteAffectable, Acces, SuiteNouveau ;  
 
 inh tds         : SymbolTable for Bloc, Instructions, Instruction, Expression, Expressions,
-                  SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur, 
-                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, Champ, Champs, SuiteNouveau, Acces ;
+                  SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur, Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces ;
 
 inh support     : Expression for Acces ;
 
@@ -36,7 +35,7 @@ syn ast         : Type for TypeAtomique ;
 
 syn ast         : Value for Valeur ;
 
-syn ast         : ArrayList <Instruction> for Instructions ;
+syn ast         : ArrayList<Instruction> for Instructions ;
 
 syn ast         : Instruction for Instruction ;
 
@@ -44,12 +43,11 @@ syn ast         : Assignable for Affectable, SuiteAffectable ;
 
 syn bin_op      : BinaryOperator for Additif, Multiplicatif, Comparatif ;
 
-syn champ       : FieldDeclaration for Champ ;
-
-syn champs      : LinkedList<FieldDeclaration> for Champs ;
-
 syn expressions : LinkedList<Expression> for Expressions, SuiteExpressions ;
 
+syn interfaces  : LinkedList<InterfaceDeclaration> for Interfaces ;
+
+syn interface   : InterfaceDeclaration for Interface ;
 
 space  separateur             is    "[\n\r\t ]+";
 space  commentaire            is    "\/\/.*\n";
@@ -114,20 +112,78 @@ term   identificateur_type    is    "[A-Z][a-zA-Z0-9_]*";
 Programme -> Interfaces Classes Principale ;
 
 
-Interfaces -> Interface Interfaces ;
+Interfaces -> Interface Interfaces #interfaces;
+#interfaces {
+local 
+    interfaces : LinkedList<InterfaceDeclaration>;
+do
+    interfaces := Interfaces^interfaces;
+    interfaces.addFirst(Interface^interface);
+    Interfaces^interfaces := interfaces;
+end
+}
 
-Interfaces -> ;
+Interfaces -> #interfaces;
+#interfaces {
+do
+   Interfaces^interfaces := new LinkedList<InterfaceDeclaration>();
+end
+}
+
+Interface -> interface identificateur_type Genericite HeritageInterface accolade_ouvrante ElementsInterface accolade_fermante #interface;
+#interface {
+local
+   id : InterfaceDeclaration;
+do
+   -- Si l'identificateur de type est connu
+   if Interface^tds.contains(identificateur_type^txt) then
+      error(INTERFACE_error,identificateur_type^txt);
+   else
+      id := Interface^factory.createInterface(identificateur_type^txt, Genericite^ast, HeritageInterface^ast, ElementsInterface^ast);
+      Interface^tds.register(id);
+      Interface^interface := id;
+   end
+end
+}
 
 
-Interface -> interface identificateur_type Genericite HeritageInterface accolade_ouvrante ElementsInterface accolade_fermante ;
+
+HeritageInterface -> extension identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
+#ast{
+  local 
+    hmd : HeritageMultipleDeclaration;
+  do
+    if HeritageInterface^tds.contains(identificateur_type^txt) then
+      hmd := HeritageInterface^factory.createHeritageMultiple(identificateur^txt, InstanceGenericite^ast, SuiteHeritageInterface^ast);
+      HeritageInterface^tds.register(hmd);
+      HeritageInterface^ast:= hmd;
+    else 
+      error(Classe_inexistante, identificateur_type^txt);
+    end
+  end
+}
+
+HeritageInterface -> #ast;
+#ast {
+do
+   HeritageInterface^ast := nil;
+end
+}
 
 
-HeritageInterface -> extension identificateur_type InstanceGenericite SuiteHeritageInterface ;
-
-HeritageInterface -> ;
-
-
-SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHeritageInterface ;
+SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
+#ast{
+  local
+    shi : SuiteHeritageInterface;
+  do
+    if SuiteHeritageInterface^tds.contains(identificateur_type^txt) then
+            shi := SuiteHeritageInterface^factory.createHeritageMultiple(identificateur^txt, InstanceGenericite^ast, SuiteHeritageInterface^ast);
+            SuiteHeritageInterface^tds.register(shi);
+            SuiteHeritageInterface^ast := shi;
+    else
+      error(Classe_inexistante, identificateur_type^txt);
+  end
+}
 
 SuiteHeritageInterface -> ;
 
@@ -603,7 +659,6 @@ do
     SuiteExpressions^expressions := new LinkedList<Expression>();
 end
 }
-
 
 Facteur -> soustraction Facteur #ast ;  
 #ast { 
