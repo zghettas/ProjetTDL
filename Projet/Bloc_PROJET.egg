@@ -185,22 +185,62 @@ SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHe
   end
 }
 
-SuiteHeritageInterface -> ;
+SuiteHeritageInterface -> #ast;
+#ast {
+do
+	SuiteHeritageInterface^ast := nil;
+end 
+}
 
 
-ElementsInterface -> ElementInterface ElementsInterface ;
+ElementsInterface -> ElementInterface ElementsInterface #ast ;
+#ast {
+do
+	ElementsInterface1^.elements.addFirst(ElementInterface^ast); 
+	ElementsInterface^elements := ElementsInterface1^elements;
+end
+}
 
-ElementsInterface -> ;
+
+ElementsInterface -> #ast;
+#ast {
+do
+	ElementsInsterface^elements := new LinkedList<Signature>();
+end
+}
 
 
-ElementInterface -> final statique Type identificateur affectation Expression point_virgule ;
+ElementInterface -> final statique Type identificateur affectation Expression point_virgule #ast;
+#ast {
+do
+	ElementInterface^ast := ElementInterface^factory.createSignatureStatique (identificateur^txt, Type^type, Expression^ast);
+end
+}
+	
 
-ElementInterface -> Signature point_virgule ;
+ElementInterface -> Signature point_virgule #ast ;
+#ast {
+do
+	ElementInterface^ast := Signature^ast;
+end
+}	
 
 
-Signature -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante ;  
+Signature -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante #ast;
+#ast {
+do
+	Signature^ast := Signature^factory.createSignature(identificateur^txt, Parametres^ast);
+end
+}
+  
  
-Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante ;  
+Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante #ast;
+#ast {
+do
+	Signature^ast := Signature^factory.createSignature(identificateur^txt, Type^ast, Parametres^ast);
+end
+}   
+
 
 
 Classes -> Classe Classes #classes;
@@ -262,15 +302,46 @@ end
 }
 
 
-ImplantationInterface -> implantation identificateur_type InstanceGenericite SuiteHeritageInterface ;
+ImplantationInterface -> implantation identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
+#ast {
+do
+	ImplantationInterface^ast := ImplantationInterface^factory.createImplantation (identificateur_type^txt, InstanceGenericite^ast, SuiteHeritageInterface^ast);
+end
+}
+	
 
-ImplantationInterface -> ;
+ImplantationInterface -> #ast;
+#ast {
+do
+	ImplantationInterface^ast:=nil;
+end
+}
 
 
-Principale -> public classe identificateur_type accolade_ouvrante MethodePrincipale accolade_fermante ;
+Principale -> public classe identificateur_type accolade_ouvrante MethodePrincipale accolade_fermante #ast ;
+#ast {
+local
+	c : ClasseDeclaration;
+do
+	if Principale^tds.contains(identificateur_type^txt) then
+		error(ERROR_CLASSEEXISTANTE, identificateur_type^txt);
+	else
+		c:= Principale^factory.createClassePrincipale(identificateur_type^txt, MethodePrincipale^ast);
+		Principale^tds.register(c);
+		Principale^ast:=c;
+	end
+end
+} 	
+		
 
 
-MethodePrincipale -> public statique vide principale parenthese_ouvrante type_String crochet_ouvrant crochet_fermant identificateur parenthese_fermante Bloc ;
+MethodePrincipale -> public statique vide principale parenthese_ouvrante type_String crochet_ouvrant crochet_fermant identificateur parenthese_fermante Bloc #ast ;
+#ast {
+do
+	MethodePrincipale^ast := MethodePrincipale^factory.createMethodeDeclaration ( principale^txt, type_String^txt, identificateur^txt, Bloc^ast);
+end
+}
+
 
 
 Genericite -> inferieur ParametresGenericite superieur ;
