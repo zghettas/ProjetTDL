@@ -203,17 +203,64 @@ Signature -> vide identificateur parenthese_ouvrante Parametres parenthese_ferma
 Signature -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante ;  
 
 
-Classes -> Classe Classes ;
+Classes -> Classe Classes #classes;
+#classes {
+local 
+    classes : LinkedList<ClasseDeclaration>;
+do
+    classes := Classes^classes;
+    classes.addFirst(Classe^classe);
+    Classes^classes := classes;
+end
+}
 
-Classes -> ;
+Classes -> #classes;
+#classes {
+do
+   Classes^classes := new LinkedList<ClasseDeclaration>();
+end
+}
 
 
-Classe -> classe  identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante ;
+Classe -> classe  identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante #classe;
+#classe {
+local
+   cd : ClasseDeclaration;
+do
+   -- Si l'identificateur de type est connu
+   if Classe^tds.contains(identificateur_type^txt) then
+      error(CLASSE_error,identificateur_type^txt);
+   else
+      cd := Classe^factory.createClasse(identificateur_type^txt, Genericite^ast, HeritageClasse^ast, ElementsClasse^ast);
+      Classe^tds.register(cd);
+      Classe^classe := cd;
+   end
+end
+}
 
 
-HeritageClasse -> extension identificateur_type InstanceGenericite ;
+HeritageClasse -> extension identificateur_type InstanceGenericite #ast;
+#ast{
+  local 
+    hcd : HeritageClasseDeclaration;
+  do
+    if HeritageClasse^tds.contains(identificateur_type^txt) then
+      hcd := HeritageClasse^factory.createHeritageClasse(identificateur^txt, InstanceGenericite^ast);
+      HeritageClasse^tds.register(hcd);
+      HeritageClasse^ast:= hcd;
+    else 
+      error(Classe_inexistante, identificateur_type^txt);
+    end
+  end
+}
 
-HeritageClasse -> ;
+HeritageClasse -> #ast;
+#ast {
+do
+   HeritageClasse^ast := nil;
+end
+}
+
 
 ImplantationInterface -> implantation identificateur_type InstanceGenericite SuiteHeritageInterface ;
 
@@ -304,12 +351,42 @@ Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fe
  
 
 
-Parametres -> ;
+Parametres -> #parametres;
+#parametres{
+do
+	Parametres^parametres := new LinkedList<Parametre>();
+end
+}
+
+Parametres -> Parametre SuiteParametres ;
+#parametres {
+local 
+    parametres : LinkedList<Parametre>;
+do
+    parametres := Parametres^parametres;
+    parametres.addFirst(Parametre^Parametre);
+    Parametres^parametres := parametres;
+end
+}
 
 Parametres -> Parametre SuiteParametres ;
 
 
-Parametre -> Type identificateur ;
+Parametre -> Type identificateur #parametre;
+#parametre {
+local
+   pd : ParametreDeclaration;
+do
+   -- Si l'identificateur est connu
+   if Parametre^tds.contains(identificateur^txt) then
+      error(PARAMETRE_error,identificateur^txt);
+   else
+      pd := Parametre^factory.createParameter(identificateur^txt, Type^type);
+      Parametre^tds.register(pd);
+      Parametre^parametre := pd;
+   end
+end
+}
 
 
 SuiteParametres -> ;
