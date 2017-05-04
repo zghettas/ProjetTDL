@@ -353,36 +353,103 @@ ArgumentGenericite -> identificateur_type InstanceGenericite ;
 ArgumentGenericite -> type_String ;
 
 
-ElementsClasse -> DroitAcces ElementClasse ElementsClasse ;
-  
-ElementsClasse -> ;  
- 
 
-DroitAcces -> public ;  
- 
-DroitAcces -> protege ;  
- 
-DroitAcces -> prive ;  
- 
+ElementsClasse -> DroitAcces ElementClasse ElementsClasse #ast;
+#ast {
+do 
+   ElementsClasse1^elements.addFirst(ElementsClasse^factory.createElementClasseDeclaration(DroitAcces^ast, ElementClasse^ast)); 
+   ElementsClasse^elements := ElementsClasse1^elements; 
+end  
+}
 
-ElementClasse -> statique AttributOuMethode ;  
+ElementsClasse -> #ast;
+#ast {
+do 
+    ElementsClasse^elements := new LinkedList<ElementClasseDeclaration>();
+end
+}
+
+
+DroitAcces -> public #ast;
+#ast {
+do
+    DroitAcces^ast := DroitAcces^factory.createAccesPublic();
+end
+}  
+
+DroitAcces -> protege #ast;
+#ast {
+do
+    DroitAcces^ast := DroitAcces^factory.createAccesProtege();
+end
+}  
  
-ElementClasse -> AttributOuMethode ;
+DroitAcces -> prive #ast;
+#ast {
+do
+    DroitAcces^ast := DroitAcces^factory.createAccesPrive();
+end
+}
+
+
+ElementClasse -> statique #inh AttributOuMethode #ast;
+#ast {
+do
+    ElementClasse^ast := AttributOuMethode^ast;
+end
+}
+#inh {
+do
+    AttributOuMethode^h := ElementClasse^factory.createStatiqueDeclaration();
+end
+}
+
+ElementClasse -> #inh AttributOuMethode #ast;
+#ast {
+do
+    ElementClasse^ast := AttributOuMethode^ast;
+}
+#inh {
+do
+    ElementClasse^h := ElementClasse^factory.createInstanceDeclaration();
+end
+}
  
-ElementClasse -> Constructeur ;  
-   
+ElementClasse -> Constructeur #ast;
+#ast {
+do
+    ElementClasse^ast := Constructeur^ast;
+end
+}  
+ 
 
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode;
 
 AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc ;
 
 
-SuiteAttributOuMethode -> point_virgule ;
+SuiteAttributOuMethode -> point_virgule #ast;
+#ast {
+do
 
-SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Bloc ;
+end
+}
+
+SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
+#ast {
+do
+
+end
+}
 
 
-Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc ;
+
+Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
+#ast {
+do
+    Constructeur^ast := Constructeur^factory.createConstructeurDeclaration(identificateur_type^txt, Parametres^ast, Bloc^ast);
+end
+}
  
 
 
