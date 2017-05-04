@@ -392,27 +392,17 @@ end
 }
 
 
-ElementClasse -> statique #inh AttributOuMethode #ast;
+ElementClasse -> statique AttributOuMethode #ast;
 #ast {
 do
-    ElementClasse^ast := AttributOuMethode^ast;
-end
-}
-#inh {
-do
-    AttributOuMethode^h := ElementClasse^factory.createStatiqueDeclaration();
+    ElementClasse^ast := ElementClasse^factory.createAttributOuMethodeStatique(AttributOuMethode^ast);
 end
 }
 
-ElementClasse -> #inh AttributOuMethode #ast;
+ElementClasse -> AttributOuMethode #ast;
 #ast {
 do
-    ElementClasse^ast := AttributOuMethode^ast;
-}
-#inh {
-do
-    ElementClasse^h := ElementClasse^factory.createInstanceDeclaration();
-end
+    ElementClasse^ast := ElementClasse^factory.createAttributOuMethodeInstance(AttributOuMethode^ast);
 }
  
 ElementClasse -> Constructeur #ast;
@@ -423,25 +413,34 @@ end
 }  
  
 
-AttributOuMethode -> Type identificateur SuiteAttributOuMethode;
+AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
+#ast {
+do
+    AttributOuMethode^ast := AttributOuMethode^factory.createAttributOuMethodeDeclaration(identificateur^ast, Type^ast, SuiteAttributOuMethode^ast);
+end
+}
 
-AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc ;
+AttributOuMethode -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc;
+#ast {
+do
+    AttributOuMethode^ast := AttributOuMethode^factory.createMethodeVideDeclaration(identificateur^ast, Parametres^ast, Bloc^ast);
+end
+}
 
 
 SuiteAttributOuMethode -> point_virgule #ast;
 #ast {
 do
-
+    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createAttributDeclaration();
 end
 }
 
 SuiteAttributOuMethode -> parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-
+    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createMethodeDeclaration(Parametres^ast, Bloc^ast);
 end
 }
-
 
 
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
@@ -450,8 +449,6 @@ do
     Constructeur^ast := Constructeur^factory.createConstructeurDeclaration(identificateur_type^txt, Parametres^ast, Bloc^ast);
 end
 }
- 
-
 
 Parametres -> ;
 
