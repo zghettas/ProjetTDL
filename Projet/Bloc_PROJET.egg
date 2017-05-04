@@ -18,7 +18,10 @@ inh factory     : BlockFactory for Bloc, Instruction, SuiteConditionnelle, Instr
                   SuiteAffectable, Acces, SuiteNouveau ;  
 
 inh tds         : SymbolTable for Bloc, Instructions, Instruction, Expression, Expressions,
-                  SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur, Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces ;
+                  SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur,
+                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces ;
+
+inh type        : Type for SuiteTypeAtomique ;
 
 inh support     : Expression for Acces ;
 
@@ -146,8 +149,6 @@ do
 end
 }
 
-
-
 HeritageInterface -> extension identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
 #ast{
   local 
@@ -169,7 +170,6 @@ do
    HeritageInterface^ast := nil;
 end
 }
-
 
 SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
 #ast{
@@ -329,43 +329,67 @@ do
 end
 }
 
-TypeAtomique SuiteTypeAtomique ;
-
+TypeAtomique -> #inh SuiteTypeAtomique #ast;
+#ast {
+do
+    TypeAtomique^ast := SuiteTypeAtomique^ast;
+end
+}
+#inh {
+do
+    SuiteTypeAtomique^type := TypeAtomique^ast;
+end 
+}
 
 TypeAtomique -> type_bool #ast ;
 #ast {
 do
-   TypeAtomique^ast := TypeAtomique^factory.createBooleanType();  
+    TypeAtomique^ast := TypeAtomique^factory.createBooleanType();  
 end
 }
 
 TypeAtomique -> type_int  #ast ;
 #ast {
 do
-   TypeAtomique^ast := TypeAtomique^factory.createIntegerType(); 
+    TypeAtomique^ast := TypeAtomique^factory.createIntegerType(); 
 end
 }  
  
 TypeAtomique -> type_char #ast ;
 #ast {
 do
-   TypeAtomique^ast := TypeAtomique^factory.createCharType(); 
+    TypeAtomique^ast := TypeAtomique^factory.createCharType(); 
 end
 }
 
 TypeAtomique -> type_String #ast ;
 #ast {
 do
-   TypeAtomique^ast := TypeAtomique^factory.createStringType();
+    TypeAtomique^ast := TypeAtomique^factory.createStringType();
 end
 }
  
-TypeAtomique -> identificateur_type InstanceGenericite  ; 
+TypeAtomique -> identificateur_type InstanceGenericite ; 
 
 
-SuiteTypeAtomique -> crochet_ouvrant crochet_fermant SuiteTypeAtomique ;
+SuiteTypeAtomique -> crochet_ouvrant crochet_fermant #inh SuiteTypeAtomique #ast;
+#inh {
+do
+    SuiteTypeAtomique^type := SuiteTypeAtomique^factory.createArrayType(SuiteTypeAtomique^type);
+end
+}
+#ast {
+do
+    SuiteTypeAtomique^ast := SuiteTypeAtomique1^ast;
+end
+}
 
-SuiteTypeAtomique -> ;
+SuiteTypeAtomique -> #ast;
+#ast {
+do
+    SuiteTypeAtomique^ast := 
+end  
+}
 
 
 Instructions -> #ast;
