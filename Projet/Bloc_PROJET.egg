@@ -52,6 +52,21 @@ syn interfaces  : LinkedList<InterfaceDeclaration> for Interfaces ;
 
 syn interface   : InterfaceDeclaration for Interface ;
 
+syn ast 	: HeritageDeclaration for HeritageInterface, SuiteHeritageInterface;
+
+syn ast 	: Instance for InstanceGenericite;
+
+syn ast 	: Signature for ElementInterface;
+
+syn elements 	: LinkedList<Signature> for ElementsInterface;
+
+syn ast 	: Implantation for ImplantationInterface;
+
+syn ast		: Type for Type;
+
+syn ast		: Methode for MethodePrincipale;
+
+
 space  separateur             is    "[\n\r\t ]+";
 space  commentaire            is    "\/\/.*\n";
 sugar  accolade_ouvrante      is    "\{";  
