@@ -536,7 +536,7 @@ end
 SuiteTypeAtomique -> #ast;
 #ast {
 do
-    SuiteTypeAtomique^ast := 
+    SuiteTypeAtomique^ast := SuiteTypeAtomique^type;
 end  
 }
 
@@ -559,7 +559,7 @@ do
 end
 }
 
-Instruction -> Type identificateur affectation Expression point_virgule ;
+Instruction -> Type identificateur affectation Expression point_virgule;
 
 Instruction -> Expression point_virgule ;
 
