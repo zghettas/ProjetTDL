@@ -403,12 +403,6 @@ ArgumentGenericite -> identificateur_type InstanceGenericite ;
 
 ArgumentGenericite -> type_String ;
 
-
-ElementsClasse -> DroitAcces ElementClasse ElementsClasse ;
-  
-ElementsClasse -> ;  
- 
-
 ElementsClasse -> DroitAcces ElementClasse ElementsClasse #ast;
 #ast {
 do 
