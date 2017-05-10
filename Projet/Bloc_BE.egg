@@ -48,6 +48,7 @@ syn expressions : LinkedList<Expression> for Expressions, SuiteExpressions ;
 
 syn nom         : String for NomEtendu ;
 
+
 space  separateur             is    "[\n\r\t ]+";
 space  commentaire            is    "\/\/.*\n";
 sugar  accolade_ouvrante      is    "\{";  
@@ -89,6 +90,7 @@ sugar  different              is    "\!=";
 sugar  typedef                is    "typedef";
 sugar  adresse                is    "&";
 sugar  nouveau                is    "new";
+sugar  return                 is    "return";
 term   entier                 is    "[0-9]+";
 term   identificateur         is    "[a-z][a-zA-Z0-9_]*"; 
 term   identificateur_type    is    "[A-Z][a-zA-Z0-9_]*"; 
