@@ -850,27 +850,77 @@ do
    SuiteNomEtendu^ast := SuiteNomEtendu^type;
 end
 }
-
 Programme -> Fun Programme;
 
 Fun -> Type identificateur parenthese_ouvrante Parametres parenthense_fermante bloc;
 
 Instruction -> return E;
 
-Parametres -> ;
+Parametres -> #ast ;
+#ast {
+do
+   Parametres^ast := nil;
+end
+}
 
-Parametres -> SuiteParametres;
+Parametres -> SuiteParametres #ast ;
+#ast {
+do
+   Parametres^ast := SuiteParametres^ast;
+end
+}
 
-SuiteParametres -> Parametre virgule SuiteParametres;
+SuiteParametres -> Parametre virgule SuiteParametres #ast ;
+#ast {
+local
+   lp : LinkedList<ParametreDeclaration>
+do
+   lp := SuiteParametres1^ast;
+   lp.addFirst(Parametre^ast);
+   SuiteParametres^ast := lp;
+end 
+}
 
-SuiteParametres -> Parametre;
+SuiteParametres -> Parametre #ast;
+#ast {
+local
+   lp : LinkedList<ParametreDeclaration>
+do
+   lp := new LinkedList<ParametreDeclaration>();
+   lp.addFirst(Parametre^ast);
+   SuiteParametres^ast := lp;
+end
+}
 
-Parametre -> Type NomEtendu;
+Parametre -> Type NomEtendu #ast ;
+#ast {
+do
+   Parametre^ast := Parametre^factory.createParametreDeclaration(Type^ast, NomEtendu^ast);
+end
+}
 
-Expression -> identificateur parenthese_ouvrante SuiteExpressionRetour parenthese_fermante;
+Expression -> identificateur parenthese_ouvrante SuiteExpressionRetour parenthese_fermante #ast;
+#ast {
+do
+   Expression^ast := SuiteExpressionRetour^ast;
+end
+}
 
-SuiteExpressionRetour -> ;
+SuiteExpressionRetour -> #ast;
+#ast {
+do
+   SuiteExpressionRetour^ast := nil;
+end
+}
 
-SuiteExpressionRetour -> SuiteExpressions;
+SuiteExpressionRetour -> SuiteExpressions #ast;
+#ast {
+do
+   SuiteExpressionRetour^ast := SuiteExpressions^ast;
+end
+}
+
+end
+
 
 end
