@@ -851,4 +851,26 @@ do
 end
 }
 
+Programme -> Fun Programme;
+
+Fun -> Type identificateur parenthese_ouvrante Parametres parenthense_fermante bloc;
+
+Instruction -> return E;
+
+Parametres -> ;
+
+Parametres -> SuiteParametres;
+
+SuiteParametres -> Parametre virgule SuiteParametres;
+
+SuiteParametres -> Parametre;
+
+Parametre -> Type NomEtendu;
+
+Expression -> identificateur parenthese_ouvrante SuiteExpressionRetour parenthese_fermante;
+
+SuiteExpressionRetour -> ;
+
+SuiteExpressionRetour -> SuiteExpressions;
+
 end
