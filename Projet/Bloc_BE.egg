@@ -852,9 +852,19 @@ end
 }
 Programme -> Fun Programme;
 
-Fun -> Type identificateur parenthese_ouvrante Parametres parenthense_fermante bloc;
 
-Instruction -> return E;
+Function -> Type identificateur parenthese_ouvrante Parametres parenthense_fermante Bloc #ast;
+#ast {
+do
+   if Function^tds.contains(identificateur^txt);
+   Function^ast := Function^factory.createFunctionDeclaration(identificateur^txt, Type^type, Parametres^ast, Bloc^ast);  
+end
+}
+
+Instruction -> return Expression #ast;
+#ast {
+    Instruction^ast := Expression^ast;
+}
 
 Parametres -> #ast ;
 #ast {
