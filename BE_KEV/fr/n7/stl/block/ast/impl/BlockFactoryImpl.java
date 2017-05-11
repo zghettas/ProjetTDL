@@ -200,6 +200,13 @@ public class BlockFactoryImpl implements BlockFactory {
 	}
 
 	/* (non-Javadoc)
+	 * @see fr.n7.stl.block.ast.ExpressionFactory#createFunctionDeclaration(fr.n7.stl.block.ast.Expression)
+	 */
+	@Override
+	public FunctionDeclaration createFunctionDeclaration(String _identificateur, Type _typeRetour, Iterable<Type> _parameters, Block _block) {
+		return new FunctionDeclaration(_identificateur, _typeRetour, _parameters, _block);
+	}
+	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.ExpressionFactory#createArrayAccess(fr.n7.stl.block.ast.Expression, fr.n7.stl.block.ast.Expression)
 	 */
 	@Override
