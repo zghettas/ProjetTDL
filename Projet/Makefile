@@ -12,9 +12,9 @@ all : legg compile doc exec
 doc :
 	mkdir doc && \
 	cd doc && \
-	$(JAVADOC) ../fr/n7/stl/block/ast/*.java ../fr/n7/stl/block/ast/impl/*.java \
-	../fr/n7/stl/tam/ast/*.java ../fr/n7/stl/tam/ast/impl/*.java \
-	../fr/n7/stl/util/*.java
+	$(JAVADOC) ../src/fr/n7/stl/block/ast/*.java ../src/fr/n7/stl/block/ast/impl/*.java \
+	../src/fr/n7/stl/tam/ast/*.java ../src/fr/n7/stl/tam/ast/impl/*.java \
+	../src/fr/n7/stl/util/*.java
 
 legg : 
 	$(JAVA) -jar $(EGGJAR) Bloc.egg
@@ -32,6 +32,6 @@ clean :
 	-rm Main.class
 	-rm -rf egg
 	-rm -rf doc
-	-rm -rf fr/n7/stl/block/ast/*.class fr/n7/stl/block/ast/impl/*.class
-	-rm -rf fr/n7/stl/tam/ast/*.class fr/n7/stl/tam/ast/impl/*.class
-	-rm -rf fr/n7/stl/util/*.class
+	-rm -rf src/fr/n7/stl/block/ast/*.class src/fr/n7/stl/block/ast/impl/*.class
+	-rm -rf src/fr/n7/stl/tam/ast/*.class src/fr/n7/stl/tam/ast/impl/*.class
+	-rm -rf src/fr/n7/stl/util/*.class
