@@ -52,6 +52,8 @@ syn champs        : LinkedList<FieldDeclaration> for Champs ;
 
 syn expressions : LinkedList<Expression> for Expressions, SuiteExpressions, SuiteExpressionsRetour ;
 
+syn expression  : ExpressionRetour for ExpressionRetour;
+
 syn nom            : String for NomEtendu ;
 
 syn functions      : LinkedList<Function> for Programme ;
@@ -934,7 +936,7 @@ end
 Expression -> identificateur parenthese_ouvrante ExpressionRetour parenthese_fermante #ast;
 #ast {
 do
-    Expression^ast := Expression^factory.createExpressionRetour(ExpressionRetour^expressions);
+    Expression^ast := ExpressionRetour^expression;
 end
 }
 
@@ -948,7 +950,7 @@ end
 ExpressionRetour -> Expressions #ast;
 #ast {
 do
-    ExpressionRetour^expressions := Expressions^expressions;
+    ExpressionRetour^expression := ExpressionRetour^factory.createExpressionRetour(Expressions^expressions);
 end
 }
 
