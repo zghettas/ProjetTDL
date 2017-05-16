@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.n7.stl.block.ast.FunctionDeclaration;
+import fr.n7.stl.block.ast.Parameter;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.block.ast.Block;
 
@@ -29,7 +30,7 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 		for (Parameter _parameter : _parameters) {
 			this.parameters.add(_parameter);
 		}
-		this.block = _block
+		this.block = _block;
 	}
 
 	/* (non-Javadoc)
@@ -53,9 +54,9 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 	 */
 	@Override
 	public String toString() {
-		String resParameters;
+		String resParameters = "";
 		for (Parameter _parameter : parameters) {
-			resParameters = resParameters + _parameter.getType().toString() + _parameter.getNom();
+			resParameters += _parameter.getType().toString() + _parameter.getNom();
 		}
 		return "Public " + this.type + " " + this.name + "(" + resParameters + ")";
 	}

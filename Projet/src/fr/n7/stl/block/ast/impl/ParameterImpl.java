@@ -1,10 +1,11 @@
 package fr.n7.stl.block.ast.impl;
 
+import fr.n7.stl.block.ast.Parameter;
 import fr.n7.stl.block.ast.Type;
 
 
-
 public class ParameterImpl implements Parameter {
+	
 	private String nom;
 	private Type type;
 
