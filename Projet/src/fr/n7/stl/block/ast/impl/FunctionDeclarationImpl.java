@@ -9,7 +9,7 @@ import java.util.List;
 
 import fr.n7.stl.block.ast.FunctionDeclaration;
 import fr.n7.stl.block.ast.Type;
-import fr.n7.stl.block.ast.Block
+import fr.n7.stl.block.ast.Block;
 
 /**
  * Implementation of the Abstract Syntax Tree node for Function Declaration.

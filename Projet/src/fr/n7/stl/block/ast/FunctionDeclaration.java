@@ -1,3 +1,4 @@
+package fr.n7.stl.block.ast;
 
 import fr.n7.stl.block.ast.Type;
 
