@@ -12,19 +12,19 @@ inh gauche       : Expression for SuiteCondition, SuiteTerme, SuiteFacteur;
 inh factory      : BlockFactory for Bloc, Instruction, SuiteConditionnelle, Instructions, 
                         Expression, Expressions, SuiteExpressions, Condition, SuiteCondition, 
                         Terme, SuiteTerme, Facteur, SuiteFacteur, Valeur, Type, Affectable, 
-                        SuiteAffectable, Acces, Champ, Champs, NomEtendu, SuiteNomEtendu, SuiteNouveau, Function, Parametre ;  
+                        SuiteAffectable, Acces, Champ, Champs, NomEtendu, SuiteNomEtendu, SuiteNouveau, Function, Parametre, SuiteParametres,Functions, ExpressionRetour, Parametres, SuiteProgramme;  
 
 inh tds            : SymbolTable for Bloc, Instructions, Instruction, Expression, Expressions,
                         SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur, 
-                        Condition, SuiteCondition, Type, Valeur, Affectable, SuiteAffectable, Champ, Champs, SuiteNouveau, Acces, Function ;
+                        Condition, SuiteCondition, Type, Valeur, Affectable, SuiteAffectable, Champ, Champs, SuiteNouveau, Acces, Function, SuiteParametres, Functions, NomEtendu, Parametre, ExpressionRetour , SuiteProgramme, Parametres;
 
 inh support      : Expression for Acces ;
 
 inh support      : Assignable for SuiteAffectable ;
 
-inh type          : Type for NomEtendu, SuiteNomEtendu, SuiteNouveau ;
+inh type          : Type for NomEtendu, SuiteNomEtendu, SuiteNouveau, Parametre, Parametres, SuiteParametres, Function, Functions, SuiteProgramme, Programme;
 
-syn ast            : Block for Programme, Bloc, SuiteConditionnelle ;
+syn ast            : Block for Programme, Bloc, SuiteConditionnelle, SuiteProgramme;
 
 syn ast            : Expression for Expression, Condition, SuiteCondition, Terme, SuiteTerme, Facteur, SuiteFacteur, Acces, SuiteNouveau ;
 
@@ -44,19 +44,20 @@ syn ast            : LinkedList<Parametre> for Parametres, SuiteParametres ;
 
 syn ast            : Parametre for Parametre ;
 
-syn bin_op        : BinaryOperator for Additif, Multiplicatif, Comparatif ;
+syn bin_op         : BinaryOperator for Additif, Multiplicatif, Comparatif ;
 
-syn champ         : FieldDeclaration for Champ ;
+syn champ          : FieldDeclaration for Champ ;
 
-syn champs        : LinkedList<FieldDeclaration> for Champs ;
+syn champs         : LinkedList<FieldDeclaration> for Champs ;
 
-syn expressions : LinkedList<Expression> for Expressions, SuiteExpressions, SuiteExpressionsRetour ;
+syn expressions    : LinkedList<Expression> for Expressions, SuiteExpressions ;
 
-syn expression  : ExpressionRetour for ExpressionRetour;
-
+syn expression 	   : ExpressionRetour for ExpressionRetour;
+ 
 syn nom            : String for NomEtendu ;
 
-syn functions      : LinkedList<Function> for Programme ;
+syn ast     	   : LinkedList<Function> for Functions ;
+
 
 
 space  separateur                 is     "[\n\r\t ]+";
@@ -109,17 +110,25 @@ term    identificateur_type     is     "[A-Z][a-zA-Z0-9_]*";
 -- Remplacera la règle suivante pour pouvoir traiter les instructions
 -- Programme -> identificateur Bloc ;
 
-Programme -> identificateur #inh Bloc #ast ;
+Programme -> #inh SuiteProgramme #ast;
 #inh {
 do
-    Bloc^factory := new BlockFactoryImpl();
-    Bloc^tds := new SymbolTable();
+    SuiteProgramme^factory := new BlockFactoryImpl();
+    SuiteProgramme^tds := new SymbolTable();
 end
 }
+
 #ast {
 do
-    Programme^ast := Bloc^ast;
-    Programme^functions := new LinkedList<Function>();
+    Programme^ast := SuiteProgramme^ast;
+end
+}
+
+SuiteProgramme -> identificateur Bloc #ast ;
+
+#ast {
+do
+    SuiteProgramme^ast := Bloc^ast;
 end
 }
 
@@ -864,19 +873,43 @@ do
 end
 }
 
-Programme -> Function Programme #ast;
-#ast {
-local
-    lf : LinkedList<Function>;
+SuiteProgramme -> Functions #inh Bloc #ast;
+
+#inh {
 do
-    lf := Programme1^functions;
-    lf.addFirst(Function^ast);
-    Programme^functions := lf;
-    Programme^ast := Programme1^ast;
+    Bloc^factory := new BlockFactoryImpl();
 end
 }
 
-Function -> Type identificateur parenthese_ouvrante Parametres parenthense_fermante Bloc #ast;
+#ast {
+do
+    SuiteProgramme^ast := Bloc^ast; 
+end
+}
+
+
+Functions -> Function Functions #ast;
+#ast {
+local 
+
+lf : LinkedList<Function>;
+
+do
+   lf := Functions1^ast;
+   lf.addFirst(Function^ast);
+   Functions^ast := lf;
+end
+}
+
+Functions -> #ast;
+#ast {
+do 
+	Functions^ast := new LinkedList<Function>();
+end
+}
+
+
+Function -> Type identificateur parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
     Function^ast := Function^factory.createFunctionDeclaration(identificateur^txt, Type^ast, Parametres^ast, Bloc^ast);  
@@ -911,6 +944,7 @@ local
 do
     lp := SuiteParametres1^ast;
     lp.addFirst(Parametre^ast);
+    SuiteParametres^tds.register(lp);
     SuiteParametres^ast := lp;
 end 
 }
@@ -943,14 +977,14 @@ end
 ExpressionRetour -> #ast;
 #ast {
 do
-    ExpressionRetour^ast := nil;
+    ExpressionRetour^expression := nil ;
 end
 }
 
 ExpressionRetour -> Expressions #ast;
 #ast {
 do
-    ExpressionRetour^expression := ExpressionRetour^factory.createExpressionRetour(Expressions^expressions);
+    ExpressionRetour^expression := ExpressionRetour^factory.createExpressionRetour(Expressions^expressions) ;
 end
 }
 
