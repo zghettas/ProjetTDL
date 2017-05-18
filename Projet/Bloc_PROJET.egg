@@ -127,40 +127,61 @@ term   identificateur         is    "[a-z_][a-zA-Z0-9_]*";
 term   identificateur_type    is    "[A-Z][a-zA-Z0-9_]*"; 
 
 
-Programme -> Interfaces Classes Principale ;
-
-
-Interfaces -> Interface Interfaces #interfaces;
-#interfaces {
-local 
-    interfaces : LinkedList<InterfaceDeclaration>;
+Programme -> #tds Interfaces Classes Principale #ast;
+#tds {
+local
+	st : SymbolTable;
 do
-    interfaces := Interfaces^interfaces;
+	Interfaces^tds := st;
+	Classes^tds := st;
+	Principale^tds := st;
+end
+}
+#ast {
+local
+	bfi : BlockFactoryImpl;
+do
+	bfi := new BlockFactoryImpl();
+	Programme^ast := bfi.createProgramme(Interfaces^interfaces, Classes^classes, Principale^ast);
+end
+}
+
+
+Interfaces -> Interface #tds Interfaces #interfaces;
+#interfaces {
+do
+    interfaces := Interfaces1^interfaces;
     interfaces.addFirst(Interface^interface);
     Interfaces^interfaces := interfaces;
+end
+}
+#tds {
+local
+	bfi : BlockFactoryImpl;
+do
+	bfi := new BlockFactoryImpl();
+	if Interfaces^tds.contains(Interface^ast.getNom()) then
+		error(INTERFACE_ALREADY_DECLARED);
+	else
+		Interfaces1^tds.register(bfi.createInterfaceDeclaration(Interface^ast));
+	end
 end
 }
 
 Interfaces -> #interfaces;
 #interfaces {
 do
-   Interfaces^interfaces := new LinkedList<InterfaceDeclaration>();
+   Interfaces^interfaces := new LinkedList<Interface>();
 end
 }
 
 Interface -> interface identificateur_type Genericite HeritageInterface accolade_ouvrante ElementsInterface accolade_fermante #interface;
 #interface {
 local
-   id : InterfaceDeclaration;
+   i : Interface;
 do
-   -- Si l'identificateur de type est connu
-   if Interface^tds.contains(identificateur_type^txt) then
-      error(INTERFACE_error,identificateur_type^txt);
-   else
-      id := Interface^factory.createInterface(identificateur_type^txt, Genericite^ast, HeritageInterface^ast, ElementsInterface^ast);
-      Interface^tds.register(id);
-      Interface^interface := id;
-   end
+   i := Interface^factory.createInterface(identificateur_type^txt, Genericite^ast, HeritageInterface^ast, ElementsInterface^ast);
+   Interface^interface := i;
 end
 }
 
