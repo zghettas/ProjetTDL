@@ -15,15 +15,15 @@ inh gauche      : Expression for SuiteCondition, SuiteTerme, SuiteFacteur;
 inh factory     : BlockFactory for Bloc, Instruction, SuiteConditionnelle, Instructions, 
                   Expression, Expressions, SuiteExpressions, Condition, SuiteCondition, 
                   Terme, SuiteTerme, Facteur, SuiteFacteur, Valeur, TypeAtomique, Affectable, 
-                  SuiteAffectable, Acces, SuiteNouveau, HeritageInterface, Interface ;  
+                  SuiteAffectable, Acces, SuiteNouveau, HeritageInterface, Interface, Interfaces, Programme, Classes, Principale, SuiteHeritageInterface, ElementInterface ;  
 
 inh tds         : SymbolTable for Bloc, Instructions, Instruction, Expression, Expressions,
                   SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur,
-                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces, Interfaces, Classes, Principale, HeritageInterface;
+                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces, Interfaces, Classes, Principale, HeritageInterface, SuiteHeritageInterface, ElementsInterface;
 
 inh tdsSignaturesInterface : 	SymbolTableSignature for Interfaces, Interface;
 
-inh tdsConstantesInterface :  	SymbolTable for Interfaces, Interface;
+inh tdsConstantesInterface :  	SymbolTable for Interfaces, Interface, ElementInterface;
 
 inh tdsNomsInterface	    :	SymbolTable for Interfaces;
 
@@ -64,9 +64,9 @@ syn ast 	: HeritageDeclaration for HeritageInterface, SuiteHeritageInterface;
 
 syn ast 	: Instance for InstanceGenericite;
 
-syn ast 	: Signature for ElementInterface;
+syn ast 	: Element for ElementInterface;
 
-syn elements 	: LinkedList<Signature> for ElementsInterface;
+syn elements 	: LinkedList<Element> for ElementsInterface;
 
 syn ast 	: Implantation for ImplantationInterface;
 
@@ -79,6 +79,9 @@ syn ast		: Classe for Principale;
 syn classes	: LinkedList<Classe> for Classes;
 
 syn ast		: Classe for Interface;
+
+syn ast		: Generic for Genericite;
+
 
 
 space  separateur             is    "[\n\r\t ]+";
@@ -261,6 +264,7 @@ SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHe
             SuiteHeritageInterface^ast := shi;
     else
       error(Classe_inexistante, identificateur_type^txt);
+    end
   end
 }
 
@@ -289,7 +293,7 @@ end
 ElementsInterface -> #ast;
 #ast {
 do
-	ElementsInsterface^elementsInterface := new LinkedList<ElementInterface>();
+	ElementsInterface^elements := new LinkedList<ElementInterface>();
 end
 }
 
@@ -305,6 +309,7 @@ do
 		cd := ElementInterface^factory.createConstantDeclaration(identificateur^txt, Type^ast, Expression^ast);
 		ElementInterface^ast := cd;
 		ElementInterface^tdsConstantesInterface.register(ElementInterface^ast);
+	end
 end
 }
 	
