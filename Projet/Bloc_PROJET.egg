@@ -239,47 +239,72 @@ do
 end
 }
 
-HeritageInterface -> extension identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
+HeritageInterface -> extension identificateur_type #tds InstanceGenericite SuiteHeritageInterface #ast;
+#tds{
+ local
+    l : List<String>;
+ do
+ 	if (HeritageInterface^tdsNomsInterface.contains(identificateur_type^txt)) then
+ 		l := new LinkedList<String>();
+ 		l.add(identificateur_type^txt);
+ 		SuiteHeritageInterface^listeHeritage := l;
+ 	else
+ 		error(HERITAGE_INTERFACE_INEXISTANTE, identificateur_type^txt);
+ 	end	
+ end
+}
 #ast{
-  local 
-    hmd : HeritageMultipleDeclaration;
-  do
-    if HeritageInterface^tds.contains(identificateur_type^txt) then
-      hmd := HeritageInterface^factory.createHeritageMultiple(identificateur^txt, InstanceGenericite^ast, SuiteHeritageInterface^ast);
-      HeritageInterface^tds.register(hmd);
-      HeritageInterface^ast:= hmd;
-    else 
-      error(Classe_inexistante, identificateur_type^txt);
+local
+   od : Optional<Declaration>;
+   d : Declaration;
+do
+	od := HeritageInterface^tdsInterface.get(identificateur_type^txt);
+	d := od.get();
+	match d with Interface then
+		SuiteHeritageInterface^ast.addFirst(d);
     end
-  end
+	HeritageInterface^ast := SuiteHeritageInterface^ast;
+end
+
+
 }
 
 HeritageInterface -> #ast;
 #ast {
 do
-   HeritageInterface^ast := nil;
+   HeritageInterface^ast := new LinkedList<Interface>();
 end
 }
 
-SuiteHeritageInterface -> virgule identificateur_type InstanceGenericite SuiteHeritageInterface #ast;
-#ast{
-  local
-    shi : SuiteHeritageInterface;
+SuiteHeritageInterface -> virgule identificateur_type #tds InstanceGenericite SuiteHeritageInterface #ast;
+#tds{
   do
-    if SuiteHeritageInterface^tds.contains(identificateur_type^txt) then
-            shi := SuiteHeritageInterface^factory.createHeritageMultiple(identificateur^txt, InstanceGenericite^ast, SuiteHeritageInterface^ast);
-            SuiteHeritageInterface^tds.register(shi);
-            SuiteHeritageInterface^ast := shi;
-    else
-      error(Classe_inexistante, identificateur_type^txt);
-    end
+  	if (SuiteHeritageInterface^tdsNomsInterface.contains(identificateur_type^txt)) then
+  		SuiteHeritageInterface^listeHeritage.add(identificateur_type^txt);
+  		SuiteHeritageInterface1^listeHeritage := SuiteHeritageInterface^listeHeritage;
+  	else
+  		error(HERITAGE_INTERFACE_INEXISTANTE, identificateur_type^txt);
+  	end	
   end
+}
+#ast{
+local
+   od : Optional<Declaration>;
+   d : Declaration;
+do
+	od := HeritageInterface^tdsInterface.get(identificateur_type^txt);
+	d := od.get();
+	match d with Interface then
+		SuiteHeritageInterface^ast.addFirst(d);
+    end
+	HeritageInterface^ast := SuiteHeritageInterface^ast;
+end
 }
 
 SuiteHeritageInterface -> #ast;
 #ast {
 do
-	SuiteHeritageInterface^ast := nil;
+	SuiteHeritageInterface^ast := new LinkedList<Interface>();
 end 
 }
 
