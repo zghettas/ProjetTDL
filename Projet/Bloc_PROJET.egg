@@ -15,11 +15,11 @@ inh gauche      : Expression for SuiteCondition, SuiteTerme, SuiteFacteur;
 inh factory     : BlockFactory for Bloc, Instruction, SuiteConditionnelle, Instructions, 
                   Expression, Expressions, SuiteExpressions, Condition, SuiteCondition, 
                   Terme, SuiteTerme, Facteur, SuiteFacteur, Valeur, TypeAtomique, Affectable, 
-                  SuiteAffectable, Acces, SuiteNouveau, HeritageInterface, Interface, Interfaces, Programme, Classes, Principale, SuiteHeritageInterface, ElementInterface ;  
+                  SuiteAffectable, Acces, SuiteNouveau, HeritageInterface, Interface, Interfaces, Programme, Classes, Principale, SuiteHeritageInterface, ElementInterface, Signature, Classe, HeritageClasse, ImplantationInterface ;  
 
 inh tds         : SymbolTable for Bloc, Instructions, Instruction, Expression, Expressions,
                   SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, SuiteFacteur,
-                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces, Interfaces, Classes, Principale, HeritageInterface, SuiteHeritageInterface, ElementsInterface;
+                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces, Interfaces, Classes, Principale, HeritageInterface, SuiteHeritageInterface, ElementsInterface, Classe, HeritageClasse;
 
 inh tdsSignaturesInterface : 	SymbolTableSignature for Interfaces, Interface;
 
@@ -68,19 +68,27 @@ syn ast 	: Element for ElementInterface;
 
 syn elements 	: LinkedList<Element> for ElementsInterface;
 
+syn ast 	: LinkedList<Element> for ElementsClasse;
+
 syn ast 	: Implantation for ImplantationInterface;
 
 syn ast		: Type for Type;
 
 syn ast		: Methode for MethodePrincipale;
 
-syn ast		: Classe for Principale;
-
 syn classes	: LinkedList<Classe> for Classes;
 
-syn ast		: Classe for Interface;
+syn ast		: Classe for Interface, Classe, Principale;
 
 syn ast		: Generic for Genericite;
+
+syn ast 	: Signature for Signature;
+
+syn ast 	: LinkedList<Parametre> for Parametres;
+
+syn ast 	: Heritage for HeritageClasse;
+
+
 
 
 
@@ -329,7 +337,7 @@ local
 do
 	sd := Signature^factory.createSignature(identificateur^txt, Parametres^ast);
 	Signature^ast := sd;
-	Signature^signaturesInterface.registerSignature(Signature^ast);
+	Signature^tdsSignaturesInterface.registerSignature(Signature^ast);
 end
 }
   
@@ -349,7 +357,7 @@ local
     classes : LinkedList<ClasseDeclaration>;
 do
     classes := Classes^classes;
-    classes.addFirst(Classe^classe);
+    classes.addFirst(Classe^ast);
     Classes^classes := classes;
 end
 }
@@ -373,7 +381,7 @@ do
    else
       cd := Classe^factory.createClasse(identificateur_type^txt, Genericite^ast, HeritageClasse^ast, ElementsClasse^ast);
       Classe^tds.register(cd);
-      Classe^classe := cd;
+      Classe^ast := cd;
    end
 end
 }
