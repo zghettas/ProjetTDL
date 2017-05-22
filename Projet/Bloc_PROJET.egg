@@ -66,6 +66,12 @@ syn ast		: Type for Type;
 
 syn ast		: Methode for MethodePrincipale;
 
+syn ast		: Classe for Principale;
+
+syn classes	: LinkedList<Classe> for Classes;
+
+syn interfaces	: LinkedList<Interface> for Interfaces;
+
 
 space  separateur             is    "[\n\r\t ]+";
 space  commentaire            is    "\/\/.*\n";
@@ -145,10 +151,15 @@ do
 	Interfaces^tds := st;
 	Classes^tds := st;
 	Principale^tds := st;
+	st2 := new SymbolTable();
 	Interfaces^tdsNomsInterfaces := st2;
+	st2_1 := new SymbolTableSignature();
 	Interfaces^tdsSignaturesInterfaces := st2_1;
+	st2_2 := new SymbolTable();
 	Interfaces^tdsConstantesInterface := st2_2;
+	st3 := new SymbolTable();
 	Classes^elementsClasses := st3;
+	st4 := new SymbolTable();
 	Principale^elementsPrincipale := st4;
 	
 end
