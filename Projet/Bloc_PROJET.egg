@@ -284,8 +284,8 @@ end
 }
 #ast{
 do
-	ElementsInterface1^ast.addFirst(ElementInterface^ast);
-	ElementsInterface^ast := ElementsInterface1^ast;
+	ElementsInterface1^elements.addFirst(ElementInterface^ast);
+	ElementsInterface^elements := ElementsInterface1^elements;
 end
 }
 
