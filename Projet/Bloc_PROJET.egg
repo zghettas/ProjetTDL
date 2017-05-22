@@ -131,10 +131,26 @@ Programme -> #tds Interfaces Classes Principale #ast;
 #tds {
 local
 	st : SymbolTable;
+	st2 : SymbolTable;
+	st2_1 : SymbolTableSignatures;
+	st2_2 : SymbolTable;
+	st3 : SymbolTable;
+	st3_1 : SymbolTable;
+	st3_2 : SymbolTable;
+	st4 : SymbolTable;
+	st4_1 : SymbolTable;
+	st4_2 : SymbolTable;
 do
+	st := new SymbolTable();
 	Interfaces^tds := st;
 	Classes^tds := st;
 	Principale^tds := st;
+	Interfaces^tdsNomsInterfaces := st2;
+	Interfaces^tdsSignaturesInterfaces := st2_1;
+	Interfaces^tdsConstantesInterface := st2_2;
+	Classes^elementsClasses := st3;
+	Principale^elementsPrincipale := st4;
+	
 end
 }
 #ast {
@@ -147,8 +163,10 @@ end
 }
 
 
-Interfaces -> Interface #tds Interfaces #interfaces;
+Interfaces -> #tds Interface #tds1 Interfaces #interfaces;
 #interfaces {
+local
+	interfaces : LinkedList<Interfaces>;
 do
     interfaces := Interfaces1^interfaces;
     interfaces.addFirst(Interface^interface);
@@ -156,14 +174,20 @@ do
 end
 }
 #tds {
+do
+	Interface^tdsConstantesInterface := new SymbolTable();
+	Interface^tdsSignaturesInterface := new SymbolTable();
+end
+}
+#tds1 {
 local
 	bfi : BlockFactoryImpl;
 do
 	bfi := new BlockFactoryImpl();
-	if Interfaces^tds.contains(Interface^ast.getNom()) then
+	if Interfaces^tdsNomsInterfaces.contains(Interface^ast.getNom()) then
 		error(INTERFACE_ALREADY_DECLARED);
 	else
-		Interfaces1^tds.register(bfi.createInterfaceDeclaration(Interface^ast));
+		Interfaces1^tdsNomsInterfaces.register(bfi.createInterfaceDeclaration(Interface^ast));
 	end
 end
 }
@@ -175,13 +199,13 @@ do
 end
 }
 
-Interface -> interface identificateur_type Genericite HeritageInterface accolade_ouvrante ElementsInterface accolade_fermante #interface;
+Interface -> interface identificateur_type Genericite HeritageInterface accolade_ouvrante #inh ElementsInterface accolade_fermante #interface;
 #interface {
 local
-   i : Interface;
+   	i : Interface;
 do
-   i := Interface^factory.createInterface(identificateur_type^txt, Genericite^ast, HeritageInterface^ast, ElementsInterface^ast);
-   Interface^interface := i;
+	i := Interface^factory.createInterface(identificateur_type^txt, Genericite^ast, HeritageInterface^ast, ElementsInterface^ast);
+   	Interface^interface := i;
 end
 }
 
@@ -229,11 +253,16 @@ end
 }
 
 
-ElementsInterface -> ElementInterface ElementsInterface #ast ;
-#ast {
+ElementsInterface -> ElementInterface #tds ElementsInterface #ast ;
+#tds {
 do
-	ElementsInterface1^.elements.addFirst(ElementInterface^ast); 
-	ElementsInterface^elements := ElementsInterface1^elements;
+	ElementsInterface1^tds.register(ElementInterface^ast);
+end
+}
+#ast{
+do
+	ElementsInterface1^ast.addFirst(ElementInterface^ast);
+	ElementsInterface^ast := ElementsInterface1^ast;
 end
 }
 
@@ -241,15 +270,22 @@ end
 ElementsInterface -> #ast;
 #ast {
 do
-	ElementsInsterface^elements := new LinkedList<Signature>();
+	ElementsInsterface^elementsInterface := new LinkedList<ElementInterface>();
 end
 }
 
 
 ElementInterface -> final statique Type identificateur affectation Expression point_virgule #ast;
 #ast {
+local
+	cd : ConstantDeclaration;
 do
-	ElementInterface^ast := ElementInterface^factory.createSignatureStatique (identificateur^txt, Type^type, Expression^ast);
+	if ElementInterface^tdsConstantesInterface.contains(identificateur^txt) then
+		error(CONSTANT_ALREADY_DECLARED);
+	else
+		cd := ElementInterface^factory.createConstantDeclaration(identificateur^txt, Type^ast, Expression^ast);
+		ElementInterface^ast := cd;
+		ElementInterface^tdsConstantesInterface.register(ElementInterface^ast);
 end
 }
 	
@@ -264,8 +300,12 @@ end
 
 Signature -> vide identificateur parenthese_ouvrante Parametres parenthese_fermante #ast;
 #ast {
+local
+	sd : SignatureDeclaration;
 do
-	Signature^ast := Signature^factory.createSignature(identificateur^txt, Parametres^ast);
+	sd := Signature^factory.createSignature(identificateur^txt, Parametres^ast);
+	Signature^ast := sd;
+	Signature^signaturesInterface.registerSignature(Signature^ast);
 end
 }
   
@@ -298,7 +338,7 @@ end
 }
 
 
-Classe -> classe identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante #nom ElementsClasse accolade_fermante #classe;
+Classe -> classe  identificateur_type Genericite HeritageClasse ImplantationInterface accolade_ouvrante ElementsClasse accolade_fermante #classe;
 #classe {
 local
    cd : ClasseDeclaration;
@@ -311,12 +351,6 @@ do
       Classe^tds.register(cd);
       Classe^classe := cd;
    end
-end
-}
-
-#nom {
-do
-  ElementsClasse^nom := identificateur_type^txt;
 end
 }
 
@@ -433,16 +467,15 @@ ArgumentGenericite -> type_String ;
 ElementsClasse -> DroitAcces ElementClasse ElementsClasse #ast;
 #ast {
 do 
-   ElementsClasse1^elements.addFirst(ElementClasse^ast);
+   ElementsClasse1^elements.addFirst(ElementsClasse^factory.createElementClasseDeclaration(DroitAcces^ast, ElementClasse^ast)); 
    ElementsClasse^elements := ElementsClasse1^elements; 
-   ElementClasse^droit := DroitAcces^ast;
 end  
 }
 
 ElementsClasse -> #ast;
 #ast {
 do 
-    ElementsClasse^elements := new LinkedList<ElementClasse>();
+    ElementsClasse^elements := new LinkedList<ElementClasseDeclaration>();
 end
 }
 
@@ -450,41 +483,36 @@ end
 DroitAcces -> public #ast;
 #ast {
 do
-    DroitAcces^ast := DroitAcces.PUBLIC;
+    DroitAcces^ast := DroitAcces^factory.createAccesPublic();
 end
 }  
 
 DroitAcces -> protege #ast;
 #ast {
 do
-    DroitAcces^ast := DroitAcces.PROTECTED;
+    DroitAcces^ast := DroitAcces^factory.createAccesProtege();
 end
 }  
  
 DroitAcces -> prive #ast;
 #ast {
 do
-    DroitAcces^ast := DroitAcces.PRIVATE;
+    DroitAcces^ast := DroitAcces^factory.createAccesPrive();
 end
 }
 
 
 ElementClasse -> statique AttributOuMethode #ast;
 #ast {
-local
-  ec : ElementClasse;
 do
-  ec := AttributOuMethode^ast;
-  ec.setStatic(true);
-  ElementClasse^ast := ec;
+    ElementClasse^ast := ElementClasse^factory.createAttributOuMethodeStatique(AttributOuMethode^ast);
 end
 }
 
 ElementClasse -> AttributOuMethode #ast;
 #ast {
 do
-    ElementClasse^ast := AttributOuMethode^ast;
-end
+    ElementClasse^ast := ElementClasse^factory.createAttributOuMethodeInstance(AttributOuMethode^ast);
 }
  
 ElementClasse -> Constructeur #ast;
@@ -493,6 +521,7 @@ do
     ElementClasse^ast := Constructeur^ast;
 end
 }  
+ 
 
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
@@ -512,7 +541,7 @@ end
 SuiteAttributOuMethode -> point_virgule #ast;
 #ast {
 do
-    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createProperty(SuiteAttributOuMethode^acces, SuiteAttributOuMethode^nom, SuiteAttributOuMethode^type);
+    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createAttributDeclaration();
 end
 }
 
@@ -527,63 +556,53 @@ end
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-    if Constructeur^nom.equals(identificateur_type^txt)
-    then Constructeur^ast := Constructeur^factory.createConstructeur(identificateur_type^txt, Parametres^ast, Bloc^ast);
-    else error(CLASS_constructeur_name_does_not_match, identificateur_type^txt);
+    Constructeur^ast := Constructeur^factory.createConstructeurDeclaration(identificateur_type^txt, Parametres^ast, Bloc^ast);
 end
-} 
+}
+ 
+
 
 Parametres -> #parametres;
-#parametres {
+#parametres{
 do
 	Parametres^parametres := new LinkedList<Parametre>();
 end
 }
 
-Parametres -> Parametre SuiteParametres #parametres;
+Parametres -> Parametre SuiteParametres ;
 #parametres {
 local 
     parametres : LinkedList<Parametre>;
 do
     parametres := Parametres^parametres;
-    parametres.addFirst(Parametre^parametre);
+    parametres.addFirst(Parametre^Parametre);
     Parametres^parametres := parametres;
 end
 }
 
+Parametres -> Parametre SuiteParametres ;
+
+
 Parametre -> Type identificateur #parametre;
 #parametre {
 local
-   p : Parametre;
+   pd : ParametreDeclaration;
 do
    -- Si l'identificateur est connu
    if Parametre^tds.contains(identificateur^txt) then
-      error(PARAMETRE_already_defined,identificateur^txt);
+      error(PARAMETRE_error,identificateur^txt);
    else
-      p := Parametre^factory.createParameter(identificateur^txt, Type^type);
-      Parametre^tds.register(p);
-      Parametre^parametre := p;
+      pd := Parametre^factory.createParameter(identificateur^txt, Type^type);
+      Parametre^tds.register(pd);
+      Parametre^parametre := pd;
    end
 end
 }
 
-SuiteParametres -> #parametres;
-#parametres {
-do
-  SuiteParametres^parametres := new LinkedList<Parametre>();
-end
-}
 
-SuiteParametres -> virgule Parametre SuiteParametres #parametres;
-#parametres {
-local 
-  parametres : LinkedList<Parametre>;
-do
-  parametres := SuiteParametres^parametres;
-  parametres.addFirst(Parametre^parametre);
-  SuiteParametres^parametres := parametres;
-end
-}
+SuiteParametres -> ;
+
+SuiteParametres -> virgule Parametre SuiteParametres ;
 
 
 Bloc -> accolade_ouvrante #inh Instructions accolade_fermante #ast ;
