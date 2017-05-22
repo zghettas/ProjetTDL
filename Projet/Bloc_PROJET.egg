@@ -486,15 +486,16 @@ ArgumentGenericite -> type_String ;
 ElementsClasse -> DroitAcces ElementClasse ElementsClasse #ast;
 #ast {
 do 
-   ElementsClasse1^elements.addFirst(ElementsClasse^factory.createElementClasseDeclaration(DroitAcces^ast, ElementClasse^ast)); 
+   ElementsClasse1^elements.addFirst(ElementClasse^ast);
    ElementsClasse^elements := ElementsClasse1^elements; 
+   ElementClasse^droit := DroitAcces^ast;
 end  
 }
 
 ElementsClasse -> #ast;
 #ast {
 do 
-    ElementsClasse^elements := new LinkedList<ElementClasseDeclaration>();
+    ElementsClasse^elements := new LinkedList<ElementClasse>();
 end
 }
 
@@ -502,36 +503,41 @@ end
 DroitAcces -> public #ast;
 #ast {
 do
-    DroitAcces^ast := DroitAcces^factory.createAccesPublic();
+    DroitAcces^ast := DroitAcces.PUBLIC;
 end
 }  
 
 DroitAcces -> protege #ast;
 #ast {
 do
-    DroitAcces^ast := DroitAcces^factory.createAccesProtege();
+    DroitAcces^ast := DroitAcces.PROTECTED;
 end
 }  
  
 DroitAcces -> prive #ast;
 #ast {
 do
-    DroitAcces^ast := DroitAcces^factory.createAccesPrive();
+    DroitAcces^ast := DroitAcces.PRIVATE;
 end
 }
 
 
 ElementClasse -> statique AttributOuMethode #ast;
 #ast {
+local
+  ec : ElementClasse;
 do
-    ElementClasse^ast := ElementClasse^factory.createAttributOuMethodeStatique(AttributOuMethode^ast);
+  ec := AttributOuMethode^ast;
+  ec.setStatic(true);
+  ElementClasse^ast := ec;
 end
 }
 
 ElementClasse -> AttributOuMethode #ast;
 #ast {
 do
-    ElementClasse^ast := ElementClasse^factory.createAttributOuMethodeInstance(AttributOuMethode^ast);
+    ElementClasse^ast := AttributOuMethode^ast;
+end
 }
  
 ElementClasse -> Constructeur #ast;
@@ -540,7 +546,6 @@ do
     ElementClasse^ast := Constructeur^ast;
 end
 }  
- 
 
 AttributOuMethode -> Type identificateur SuiteAttributOuMethode #ast;
 #ast {
@@ -560,7 +565,7 @@ end
 SuiteAttributOuMethode -> point_virgule #ast;
 #ast {
 do
-    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createAttributDeclaration();
+    SuiteAttributOuMethode^ast := SuiteAttributOuMethode^factory.createProperty(SuiteAttributOuMethode^acces, SuiteAttributOuMethode^nom, SuiteAttributOuMethode^type);
 end
 }
 
@@ -575,54 +580,63 @@ end
 Constructeur -> identificateur_type parenthese_ouvrante Parametres parenthese_fermante Bloc #ast;
 #ast {
 do
-    Constructeur^ast := Constructeur^factory.createConstructeurDeclaration(identificateur_type^txt, Parametres^ast, Bloc^ast);
+    if Constructeur^nom.equals(identificateur_type^txt)
+    then Constructeur^ast := Constructeur^factory.createConstructeur(identificateur_type^txt, Parametres^ast, Bloc^ast);
+    else error(CLASS_constructeur_name_does_not_match, identificateur_type^txt);
 end
-}
- 
-
+} 
 
 Parametres -> #parametres;
-#parametres{
+#parametres {
 do
 	Parametres^parametres := new LinkedList<Parametre>();
 end
 }
 
-Parametres -> Parametre SuiteParametres ;
+Parametres -> Parametre SuiteParametres #parametres;
 #parametres {
 local 
     parametres : LinkedList<Parametre>;
 do
     parametres := Parametres^parametres;
-    parametres.addFirst(Parametre^Parametre);
+    parametres.addFirst(Parametre^parametre);
     Parametres^parametres := parametres;
 end
 }
 
-Parametres -> Parametre SuiteParametres ;
-
-
 Parametre -> Type identificateur #parametre;
 #parametre {
 local
-   pd : ParametreDeclaration;
+   p : Parametre;
 do
    -- Si l'identificateur est connu
    if Parametre^tds.contains(identificateur^txt) then
-      error(PARAMETRE_error,identificateur^txt);
+      error(PARAMETRE_already_defined,identificateur^txt);
    else
-      pd := Parametre^factory.createParameter(identificateur^txt, Type^type);
-      Parametre^tds.register(pd);
-      Parametre^parametre := pd;
+      p := Parametre^factory.createParameter(identificateur^txt, Type^type);
+      Parametre^tds.register(p);
+      Parametre^parametre := p;
    end
 end
 }
 
+SuiteParametres -> #parametres;
+#parametres {
+do
+  SuiteParametres^parametres := new LinkedList<Parametre>();
+end
+}
 
-SuiteParametres -> ;
-
-SuiteParametres -> virgule Parametre SuiteParametres ;
-
+SuiteParametres -> virgule Parametre SuiteParametres #parametres;
+#parametres {
+local 
+  parametres : LinkedList<Parametre>;
+do
+  parametres := SuiteParametres^parametres;
+  parametres.addFirst(Parametre^parametre);
+  SuiteParametres^parametres := parametres;
+end
+}
 
 Bloc -> accolade_ouvrante #inh Instructions accolade_fermante #ast ;
 #inh {
