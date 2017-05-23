@@ -19,7 +19,7 @@ inh factory     : BlockFactory for Bloc, Instruction, SuiteConditionnelle, Instr
 
 inh tds         : SymbolTable for Bloc, Instructions, Instruction, Expression, Expressions,
                   SuiteExpressions, Facteur, SuiteConditionnelle, Terme, SuiteTerme, AttributOuMethode, SuiteAttributOuMethode, SuiteFacteur, ElementsClasse, ElementClasse,
-                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces, Constructeur, Parametres, Parametre ;
+                  Condition, SuiteCondition, TypeAtomique, Valeur, Affectable, SuiteAffectable, SuiteNouveau, Acces, Constructeur, Parametres, Parametre, SuiteParametres ;
 
 inh type        : Type for SuiteTypeAtomique ;
 
@@ -35,8 +35,6 @@ syn ast         : Block for Programme, Bloc, SuiteConditionnelle ;
 
 syn ast         : Expression for Expression, Condition, SuiteCondition, Terme, SuiteTerme,
                   Facteur, SuiteFacteur, Acces, SuiteNouveau ;
-
-syn ast         : Type for TypeAtomique ;
 
 syn ast         : Value for Valeur ;
 
@@ -219,7 +217,7 @@ do
     else
     i := Interface^factory.createInterface(identificateur_type^txt, Genericite^ast, HeritageInterface^ast, ElementsInterface^ast);
        Interface^interface := i;
-    Interface^tdsNomsInterface.register(Interface^ast);
+    Interface^tdsNomsInterface.register(Interface^interface);
 end
 }
 
@@ -390,15 +388,13 @@ Classe -> classe  identificateur_type Genericite HeritageClasse ImplantationInte
 local
    cd : ClasseDeclaration;
 do
-   -- Si l'identificateur de type est connu
-   if Classe^tds.contains(identificateur_type^txt) then
-      error(CLASSE_error,identificateur_type^txt);
+   if Classe^tdsNomsClasses.contains(identificateur_type^txt) then
+      error(CLASSE_ALREADY_DECLARED, identificateur_type^txt);
    else
       cd := Classe^factory.createClasse(identificateur_type^txt, Genericite^ast, HeritageClasse^ast, ElementsClasse^ast);
-      Classe^tds.register(cd);
+      Classe^tdsNomsClasses.register(cd);
       Classe^classe := cd;
    end
-   Classe^nom_classe := identificateur_type^txt;
 end
 }
 
@@ -693,7 +689,7 @@ end
 }
 #inh {
 do
-    SuiteTypeAtomique^type := TypeAtomique^ast;
+    SuiteTypeAtomique^ast := TypeAtomique^ast;
 end
 }
 
@@ -731,7 +727,7 @@ TypeAtomique -> identificateur_type InstanceGenericite ;
 SuiteTypeAtomique -> crochet_ouvrant crochet_fermant #inh SuiteTypeAtomique #ast;
 #inh {
 do
-    SuiteTypeAtomique^type := SuiteTypeAtomique^factory.createArrayType(SuiteTypeAtomique^type);
+    SuiteTypeAtomique^ast := SuiteTypeAtomique^factory.createArrayType(SuiteTypeAtomique^ast);
 end
 }
 #ast {
