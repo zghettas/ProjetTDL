@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import fr.n7.stl.block.ast.FunctionDeclaration;
-import fr.n7.stl.block.ast.Parameter;
+import fr.n7.stl.block.ast.Parametre;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.block.ast.Block;
 
@@ -21,14 +21,14 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 
 	private String name;
 	private Type type;
-	private List<Parameter> parameters;
+	private List<Parametre> parametres;
 	private Block block;
 
-	public FunctionDeclarationImpl(String _identificateur, Type _typeRetour, Iterable<Parameter> _parameters, Block _block) {
+	public FunctionDeclarationImpl(String _identificateur, Type _typeRetour, Iterable<Parametre> _parameters, Block _block) {
 		this.name = _identificateur;
 		this.type = _typeRetour;
-		for (Parameter _parameter : _parameters) {
-			this.parameters.add(_parameter);
+		for (Parametre _parametre : parametres) {
+			this.parametres.add(_parametre);
 		}
 		this.block = _block;
 	}
@@ -55,8 +55,8 @@ public class FunctionDeclarationImpl implements FunctionDeclaration {
 	@Override
 	public String toString() {
 		String resParameters = "";
-		for (Parameter _parameter : parameters) {
-			resParameters += _parameter.getType().toString() + _parameter.getNom();
+		for (Parametre _parametre : parametres) {
+			resParameters += _parametre.getType().toString() + _parametre.getName();
 		}
 		return "Public " + this.type + " " + this.name + "(" + resParameters + ")";
 	}

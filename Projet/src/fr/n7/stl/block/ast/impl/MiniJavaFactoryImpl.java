@@ -3,36 +3,50 @@
  */
 package fr.n7.stl.block.ast.impl;
 
+import java.util.LinkedList;
+
 import fr.n7.stl.block.ast.Assignable;
 import fr.n7.stl.block.ast.AtomicType;
+import fr.n7.stl.block.ast.Attribut;
 import fr.n7.stl.block.ast.BinaryOperator;
 import fr.n7.stl.block.ast.Block;
-import fr.n7.stl.block.ast.BlockFactory;
 import fr.n7.stl.block.ast.BooleanValue;
+import fr.n7.stl.block.ast.Classe;
 import fr.n7.stl.block.ast.ConstantDeclaration;
+import fr.n7.stl.block.ast.Constructeur;
+import fr.n7.stl.block.ast.ElementClasse;
+import fr.n7.stl.block.ast.ElementInterface;
 import fr.n7.stl.block.ast.Expression;
 import fr.n7.stl.block.ast.FieldDeclaration;
 import fr.n7.stl.block.ast.FunctionCall;
 import fr.n7.stl.block.ast.Instruction;
+import fr.n7.stl.block.ast.Interface;
+import fr.n7.stl.block.ast.Methode;
+import fr.n7.stl.block.ast.MethodePrincipale;
+import fr.n7.stl.block.ast.MiniJavaFactory;
+import fr.n7.stl.block.ast.Parametre;
+import fr.n7.stl.block.ast.Programme;
 import fr.n7.stl.block.ast.RecordType;
 import fr.n7.stl.block.ast.Sequence;
+import fr.n7.stl.block.ast.Signature;
 import fr.n7.stl.block.ast.Type;
 import fr.n7.stl.block.ast.TypeDeclaration;
 import fr.n7.stl.block.ast.UnaryOperator;
 import fr.n7.stl.block.ast.Value;
 import fr.n7.stl.block.ast.VariableDeclaration;
+import jdk.nashorn.internal.runtime.regexp.joni.constants.Arguments;
 
 /**
  * Implementation of the factory for building Abstract Syntax Tree node for the Bloc language.
  * @author Marc Pantel
  *
  */
-public class BlockFactoryImpl implements BlockFactory {
+public class MiniJavaFactoryImpl implements MiniJavaFactory {
 
 	/**
 	 * 
 	 */
-	public BlockFactoryImpl() {
+	public MiniJavaFactoryImpl() {
 	}
 
 	/* (non-Javadoc)
@@ -438,5 +452,80 @@ public class BlockFactoryImpl implements BlockFactory {
 	@Override
 	public Expression createArrayAllocation(Type _type, Expression _size) {
 		return new ArrayAllocationImpl(_type, _size);
+	}
+	
+	public Programme createProgramme(LinkedList<Interface> _interfaces, LinkedList<Classe> _classes, MethodePrincipale _principale) {
+		return new ProgrammeImpl(_interfaces, _classes, _principale);
+	}
+
+	public Interface createInterface(String _nom, LinkedList<Interface> _interfaces, LinkedList<ElementInterface> _elements) {
+		return new InterfaceImpl(_nom, _interfaces, _elements);
+	}
+	
+	public AttributStatique createAttributStatique(String _nom, Type _type, Expression _expr) {
+		return new AttributStatique(_nom, _type, _expr);
+	}
+	
+	public Signature createSignature(String _nomInterface, String _nomSignature, LinkedList<Parametre> _param) {
+		return new SignatureImpl(_nomInterface, _nomSignature, _param);
+	}
+	
+	public Signature createSignature(String _nomInterface, String _nomSignature, LinkedList<Parametre> _param, Type _type) {
+		return new SignatureImpl(_nomInterface, _nomSignature, _type, _param);
+	}
+	
+	public Classe createClasse(String _nomClasse, Classe _heritage, LinkedList<ElementClasse> _elements) {
+		return new ClasseImpl(_nomClasse, _heritage, _elements);
+	}
+	
+	public MethodePrincipale createMethodePrincipale(Block _bloc) {
+		return new MethodePrincipaleImpl(_bloc);
+	}
+	
+	public Methode createMethode(String _nomMethode, Type _typeRetour, LinkedList<Parametre> _params, Block _bloc) {
+		return new MethodeImpl(_nomMethode, _typeRetour, _params, _bloc);
+	}
+	public Methode createMethode(String _nomMethode, LinkedList<Parametre> _params, Block _bloc) {
+		return new MethodeImpl(_nomMethode, _params, _bloc);
+	}
+	
+	public Attribut createAttribut(String _nom, Type _type) {
+		return new AttributImpl(_nom, _type);
+	}
+	
+	public Constructeur createConstructeur(String _nom, LinkedList<Parametre> _params, Block _bloc) {
+		return new ConstructeurImpl(_nom, _params, _bloc);
+	}
+	
+	public Parametre createParametre(String _nom, Type _type) {
+		return new ParametreImpl(_nom, _type);
+	}
+	
+	public Type createInterfaceType(Interface _interface) {
+		return new InterfaceTypeImpl(_interface);
+	}
+	
+	public Type createClassType(Classe _classe) {
+		return new ClassTypeImpl(_classe);
+	}
+	
+	public Arguments createArguments() {
+		return new ArgumentsImpl();
+	}
+	
+	public Arguments createArguments(LinkedList<Expression> _expressions) {
+		return new Arguments(_expressions);
+	}
+	
+	public FunctionCall createFunctionCall(Expression _function) {
+		return new FunctionCallImpl(_function);
+	}
+	
+	public Value createStringValue(String _value) {
+		return new StringValueImpl(_value);
+	}
+
+	public Value createCharValue(String _value) {
+		return new CharValueImpl(_value);
 	}
 }
