@@ -8,14 +8,14 @@ import fr.n7.stl.tam.ast.TAMFactory;
 
 public interface Classe {
 	
-	public List<Methode> getMethodes();
+	public String getName();
 	
-	public List<Attribut> getAttributs();
+	public List<ElementClasse> getElements();
 	
-	public List<Constructeur> getConstructeurs();
+	public List<Interface> getInterfaces();
 	
-	public List<Attribut> getAttributsStatiques();
-
+	public Classe getHeritage();
+	
 	public boolean checkType();
 
 	public int allocateMemory(Register _reg, int dep);

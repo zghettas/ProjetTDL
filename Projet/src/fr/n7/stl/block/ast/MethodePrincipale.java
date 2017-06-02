@@ -8,7 +8,9 @@ public interface MethodePrincipale {
 
 	boolean checkType();
 
-	int allocateMemory(Register _reg, int dep);
+	int allocateMemory(Register _reg, int _offset);
 
 	Fragment getCode(TAMFactory _factory);
+	
+	String toString();
 }

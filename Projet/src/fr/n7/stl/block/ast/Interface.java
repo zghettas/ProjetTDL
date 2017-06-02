@@ -1,7 +1,6 @@
 package fr.n7.stl.block.ast;
 
 import java.util.LinkedList;
-import java.util.List;
 
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;

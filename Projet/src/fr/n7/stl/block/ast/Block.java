@@ -3,6 +3,8 @@
  */
 package fr.n7.stl.block.ast;
 
+import java.util.List;
+
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
@@ -53,4 +55,5 @@ public interface Block {
 	 */
 	public Fragment getCode(TAMFactory _factory);
 
+	public List<Instruction> getInstructions();
 }

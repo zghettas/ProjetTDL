@@ -462,8 +462,8 @@ public class MiniJavaFactoryImpl implements MiniJavaFactory {
 		return new InterfaceImpl(_nom, _interfaces, _elements);
 	}
 	
-	public AttributStatique createAttributStatique(String _nom, Type _type, Expression _expr) {
-		return new AttributStatique(_nom, _type, _expr);
+	public AttributFinalStatique createAttributFinalStatique(String _nomInterface, String _nom, Type _type, Expression _expr) {
+		return new AttributFinalStatiqueImpl(_nomInterface, _nom, _type, _expr);
 	}
 	
 	public Signature createSignature(String _nomInterface, String _nomSignature, LinkedList<Parametre> _param) {
@@ -474,12 +474,12 @@ public class MiniJavaFactoryImpl implements MiniJavaFactory {
 		return new SignatureImpl(_nomInterface, _nomSignature, _type, _param);
 	}
 	
-	public Classe createClasse(String _nomClasse, Classe _heritage, LinkedList<ElementClasse> _elements) {
-		return new ClasseImpl(_nomClasse, _heritage, _elements);
+	public Classe createClasse(String _nomClasse, Classe _heritage, LinkedList<Interface> interfaces, LinkedList<ElementClasse> _elements) {
+		return new ClasseImpl(_nomClasse, _heritage, interfaces, _elements);
 	}
 	
-	public MethodePrincipale createMethodePrincipale(Block _bloc) {
-		return new MethodePrincipaleImpl(_bloc);
+	public MethodePrincipale createMethodePrincipale(String _nomClassePrincipale, Block _bloc) {
+		return new MethodePrincipaleImpl(_nomClassePrincipale, _bloc);
 	}
 	
 	public Methode createMethode(String _nomMethode, Type _typeRetour, LinkedList<Parametre> _params, Block _bloc) {
@@ -515,10 +515,6 @@ public class MiniJavaFactoryImpl implements MiniJavaFactory {
 	
 	public Arguments createArguments(LinkedList<Expression> _expressions) {
 		return new Arguments(_expressions);
-	}
-	
-	public FunctionCall createFunctionCall(Expression _function) {
-		return new FunctionCallImpl(_function);
 	}
 	
 	public Value createStringValue(String _value) {

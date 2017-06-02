@@ -68,6 +68,7 @@ public class ProgrammeImpl implements Programme {
 		
 		fragment.append(methodePrincipale.getCode(_factory));
 		
+        fragment.add(_factory.createHalt());
 		return fragment;
 	}
 	

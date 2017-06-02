@@ -57,6 +57,10 @@ public class BlockImpl implements Block {
 		this.context = Optional.empty();
 	}
 
+	public List<Instruction> getInstructions() {
+		return this.instructions;
+	}
+	
 	/* (non-Javadoc)
 	 * @see fr.n7.block.ast.Block#add(fr.n7.block.ast.Instruction)
 	 */
@@ -64,7 +68,6 @@ public class BlockImpl implements Block {
 	public void add(Instruction _instruction) {
 		this.instructions.add(_instruction);
 	}
-
 
 	/* (non-Javadoc)
 	 * @see fr.n7.stl.block.ast.Block#addAll(java.lang.Iterable)

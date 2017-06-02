@@ -1,45 +1,60 @@
 package fr.n7.stl.block.ast.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import fr.n7.stl.block.ast.Attribut;
 import fr.n7.stl.block.ast.Classe;
-import fr.n7.stl.block.ast.Constructeur;
-import fr.n7.stl.block.ast.Methode;
+import fr.n7.stl.block.ast.ElementClasse;
+import fr.n7.stl.block.ast.Interface;
 import fr.n7.stl.tam.ast.Fragment;
 import fr.n7.stl.tam.ast.Register;
 import fr.n7.stl.tam.ast.TAMFactory;
 
 public class ClasseImpl implements Classe {
 
-	@Override
-	public List<Methode> getMethodes() {
-		// TODO Auto-generated method stub
-		return null;
+	String nomClasse;
+	Classe heritage;
+	LinkedList<ElementClasse> elements;
+	LinkedList<Interface> interfaces;
+	
+	public ClasseImpl(String _nomClasse, Classe _heritage, LinkedList<Interface> _interfaces, LinkedList<ElementClasse> _elements) {
+		this.nomClasse = _nomClasse;
+		this.heritage = _heritage;
+		this.interfaces = _interfaces;
+		this.elements = _elements;
 	}
 
 	@Override
-	public List<Attribut> getAttributs() {
-		// TODO Auto-generated method stub
-		return null;
+	public String getName() {
+		return this.nomClasse;
 	}
 
 	@Override
-	public List<Constructeur> getConstructeurs() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ElementClasse> getElements() {
+		return this.elements;
 	}
 
 	@Override
-	public List<Attribut> getAttributsStatiques() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Interface> getInterfaces() {
+		return this.interfaces;
+	}
+
+	@Override
+	public Classe getHeritage() {
+		return this.heritage;
 	}
 
 	@Override
 	public boolean checkType() {
-		// TODO Auto-generated method stub
-		return false;
+		for (ElementClasse elementClasse : elements) {
+			if (elementClasse.checkType()) continue;
+			else return false;
+		}
+		for (Interface interf : interfaces) {
+			if (interf.checkType()) continue;
+			else return false;
+		}
+		return heritage.checkType();
 	}
 
 	@Override
