@@ -5,6 +5,7 @@ package fr.n7.stl.block.ast.impl;
 
 import java.util.LinkedList;
 
+import fr.n7.stl.block.ast.Arguments;
 import fr.n7.stl.block.ast.Assignable;
 import fr.n7.stl.block.ast.AtomicType;
 import fr.n7.stl.block.ast.Attribut;
@@ -34,7 +35,6 @@ import fr.n7.stl.block.ast.TypeDeclaration;
 import fr.n7.stl.block.ast.UnaryOperator;
 import fr.n7.stl.block.ast.Value;
 import fr.n7.stl.block.ast.VariableDeclaration;
-import jdk.nashorn.internal.runtime.regexp.joni.constants.Arguments;
 
 /**
  * Implementation of the factory for building Abstract Syntax Tree node for the Bloc language.
@@ -514,7 +514,7 @@ public class MiniJavaFactoryImpl implements MiniJavaFactory {
 	}
 	
 	public Arguments createArguments(LinkedList<Expression> _expressions) {
-		return new Arguments(_expressions);
+		return new ArgumentsImpl(_expressions);
 	}
 	
 	public Value createStringValue(String _value) {
