@@ -1,5 +1,4 @@
-
- ----------------------------------------------- -*- text -*-
+----------------------------------------------- -*- text -*-
 -- Langage MiniJava : Sous-ensemble du langage Java pour le projet STL 2016-2017
 -- Sémantique : Construction de l'arbre abstrait
 --                    Gestion de la table des symboles
@@ -1539,151 +1538,149 @@ end
 }
  
  
-Facteur -> identificateur #inh AppelOuAcces #ast;
-#ast {
-do
-    Facteur^ast := AppelOuAcces^ast;
-end
-}
-#inh {
-local
+--Facteur -> identificateur #inh AppelOuAcces #ast;
+--#ast {
+--do
+ --   Facteur^ast := AppelOuAcces^ast;
+--end
+--}
+--#inh {
+--local
  
-  od : Optional<Declaration>;
-  d : Declaration;
-  att : Attribut;
-  v : VariableDeclaration;
-  param : Parametre;
+--  od : Optional<Declaration>;
+--  d : Declaration;
+--  att : Attribut;
+--  v : VariableDeclaration;
+--  param : Parametre;
  
-do
+--do
   
-if !(Facteur^tds.contains(identificateur^txt)) then
-    if !(Facteur^tdsElementsClassesEtInterfaces.knows(Facteur^nomClasseOuInterface, identificateur^txt)) then
-        error(ELEMENT_NON_EXISTANT, identificateur^txt);
-    else
-        od := Facteur^tdsElementsClassesEtInterfaces.get(Facteur^nomClasseOuInterface, identificateur^txt);
-d := od.get();
-match d with Attribut then att := d;    
-end
-    if att != nil then
-        AppelOuAcces^support := Facteur^factory.createAttributUse(att);
-    end
-end
-elseif Facteur^tdsClasses.contains(identificateur^txt) then
-    od := Facteur^tdsClasses.get(identificateur^txt);
-    d := od.get();
-    match d with Parametre then param := d;
-    end
-    if param != nil then
-        AppelOuAcces^support := Facteur^factory.createParametreUse(param);
-    end
-else
-od := Facteur^tds.get(identificateur^txt);
-d := od.get();
-match d with VariableDeclaration then v := d;
-end
-end
+--if !(Facteur^tds.contains(identificateur^txt)) then
+--    if !(Facteur^tdsElementsClassesEtInterfaces.knows(Facteur^nomClasseOuInterface, identificateur^txt)) then
+ --       error(ELEMENT_NON_EXISTANT, identificateur^txt);
+ --   else
+ --       od := Facteur^tdsElementsClassesEtInterfaces.get(Facteur^nomClasseOuInterface, --identificateur^txt);
+--d := od.get();
+--match d with Attribut then att := d;    
+--end
+ --   if att != nil then
+   --     AppelOuAcces^support := Facteur^factory.createAttributUse(att);
+    --end
+--end
+--elseif Facteur^tdsClasses.contains(identificateur^txt) then
+--    od := Facteur^tdsClasses.get(identificateur^txt);
+--    d := od.get();
+--    match d with Parametre then param := d;
+--    end
+--    if param != nil then
+--        AppelOuAcces^support := Facteur^factory.createParametreUse(param);
+--    end
+--else
+--od := Facteur^tds.get(identificateur^txt);
+--d := od.get();
+--match d with VariableDeclaration then v := d;
+--end
+--end
  
  
-end
-}
+--end
+--}
  
-AppelOuAcces -> Acces #ast;
-#ast {
-do 
-  AppelOuAcces^ast := Acces^ast;
-end
-}
+--AppelOuAcces -> Acces #ast;
+--#ast {
+--do 
+ -- AppelOuAcces^ast := Acces^ast;
+--end
+--}
  
-AppelOuAcces -> Appel #ast;
-#ast {
-do 
-  AppelOuAcces^ast := Appel^ast;
-end 
-}
- 
- 
-Acces -> #ast ;
-#ast {
-do  
-  Acces^ast := Acces^support;  
-end  
-}
- 
-Acces -> crochet_ouvrant Expression crochet_fermant #inh Acces #ast;
-#inh {
-do
-  Acces1^support := Acces^factory.createArrayAccess(Acces^support,Expression^ast);
-end
-}
-#ast {
-do  
-  Acces^ast := Acces1^ast;  
-end  
-}
- 
-Acces -> point identificateur AppelOuAcces #ast ;
-#ast {
-do
-Acces^ast := AppelOuAcces^ast;
-end
-} 
+--AppelOuAcces -> Appel #ast;
+--#ast {
+--do 
+ -- AppelOuAcces^ast := Appel^ast;
+--end 
+--}
  
  
-Appel -> Arguments Acces #ast;
-#ast {
-do
-	Appel^ast := Acces^ast;
-end
-}
+--Acces -> #ast ;
+--#ast {
+--do  
+ -- Acces^ast := Acces^support;  
+--end  
+--}
+ 
+--Acces -> crochet_ouvrant Expression crochet_fermant #inh Acces #ast;
+--#inh {
+--do
+--  Acces1^support := Acces^factory.createArrayAccess(Acces^support,Expression^ast);
+--end
+--}
+--#ast {
+--do  
+ -- Acces^ast := Acces1^ast;  
+--end  
+--}
+ 
+--Acces -> point identificateur AppelOuAcces #ast ;
+--#ast {
+--do
+--Acces^ast := AppelOuAcces^ast;
+--end
+--} 
+ 
+ 
+--Appel -> Arguments Acces #ast;
+--#ast {
+--do
+--    Appel^ast := Acces^ast;
+--end
+--}
  
  
  
-Facteur -> identificateur_type point identificateur #inh AppelOuAcces #ast ;
-#ast {
-do
-  Facteur^ast := AppelOuAcces^ast;
-end
-}
+--Facteur -> identificateur_type point identificateur #inh AppelOuAcces #ast ;
+--#ast {
+--do
+-- Facteur^ast := AppelOuAcces^ast;
+--end
+--}
 
-#inh {
-local
-  od : Optional<Declaration>;
-  d : Declaration;
-  c : Classe;
-  i : Interface;
-do
-  c := nil;
-  i := nil;
-  if Facteur^tdsInterfaces.contains(identificateur_type^txt) 
-then  od := Facteur^tdsInterfaces.get(identificateur_type^txt);
-  d := od.get();
-   match d with Interface then
-    i := d;
-   end
-   AppelOuAcces^support := Facteur^factory.createInterface(i);
+--#inh {
+--local
+--  od : Optional<Declaration>;
+--  d : Declaration;
+--  c : Classe;
+--  i : Interface;
+--do
+--  c := nil;
+--  i := nil;
+-- if Facteur^tdsInterfaces.contains(identificateur_type^txt) 
+-- then  od := Facteur^tdsInterfaces.get(identificateur_type^txt);
+--  d := od.get();
+--   match d with Interface then
+--    i := d;
+--   end
+--   AppelOuAcces^support := Facteur^factory.createInterface(i);
  
-  elseif Facteur^tdsClasses.contains(identificateur_type^txt)
-then od := Facteur^tdsClasses.get(identificateur_type^txt);
-	d := od.get();
-   match d with Classe then
-    i:= d;
-   end 
-   AppelOuAcces^support := Facteur^factory.createClasse(i);
-   else error(No_Class_Interface, identificateur_type^txt);
-  end
-end
-}
+--  elseif Facteur^tdsClasses.contains(identificateur_type^txt)
+--then od := Facteur^tdsClasses.get(identificateur_type^txt);
+--    d := od.get();
+--   match d with Classe then
+--    i:= d;
+--   end 
+--   AppelOuAcces^support := Facteur^factory.createClasse(i);
+--   else error(No_Class_Interface, identificateur_type^txt);
+--  end
+--end
+--}
  
-Facteur -> parenthese_ouvrante Expression parenthese_fermante #ast;  
-#ast {
-do  
-  Facteur^ast := Expression^ast;  
-end  
-}
-
-
- 
-end
- 
+--Facteur -> parenthese_ouvrante Expression parenthese_fermante #ast;  
+--#ast {
+--do  
+ -- Facteur^ast := Expression^ast;  
+--end  
+--}
 
 
+ 
+end
+ 
