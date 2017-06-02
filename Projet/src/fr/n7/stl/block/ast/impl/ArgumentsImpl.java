@@ -17,6 +17,10 @@ public class ArgumentsImpl implements Arguments {
 		this.expressions = _expressions;
 	}
 
+	public ArgumentsImpl() {
+		expressions = new LinkedList<Expression>();
+	}
+
 	@Override
 	public Type getType() {
 		SequenceTypeImpl res = new SequenceTypeImpl();
