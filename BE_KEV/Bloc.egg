@@ -2,6 +2,7 @@
 -- Langage BLOC : Bloc, Instruction et Expression façon C/Java/...
 -- Sémantique : Construction de l'arbre abstrait et gestion de la
 --                      table des symboles. 
+fichier .egg
 -----------------------------------------------
 option auto= true;
 option version = 0.0.1 ;
